@@ -109,14 +109,31 @@ def shuffle():
     diff = e - s
     diff = int((diff % 256))
     return diff
-    
 
-
+def fileops():
+    char = chr(0)
+    t = str(int(time.time()))
+    s = int(t[len(t) - 3:])
+    fp = open(".jolantru", "w+")
+    buf = []
+    for x in range(1024):
+        buf.append(char)
+    msg = "".join(buf)
+    key = urandom(32)
+    msg = RC4(key).crypt(msg)
+    fp.write(msg)
+    fp.close()
+    t = str(int(time.time()))
+    e = int(t[len(t) - 3:])
+    diff = e - s
+    diff = int((diff % 256))
+    return diff
 
 def read(filename, bufsize):
     f = open(filename, "a+")
     buf = []
     k = 0
+    j = 0
     while True:
         #block, d = getinput()
         i = freei()
@@ -129,6 +146,7 @@ def read(filename, bufsize):
         s = shuffle()
         r = rc4shuffle()
         p = sumrxpkts()
+        fo = fileops()
         k ^= m
         k ^= s
         k ^= r
@@ -136,12 +154,16 @@ def read(filename, bufsize):
         k ^= n2
         k ^= i
         k ^= p
+        k ^= fo
+        j = (j + m + s + r + n1 + n2 + i + p + fo) % 256
+        k ^= j
         #f.write(chr(k))
         buf.append(chr(k))
         if len(buf) == bufsize:
             f.write("".join(buf))
+            f.flush()
             buf = []
 
 filename = "mybytes"
-bufsize = 32
+bufsize = 128
 read(filename, bufsize)
