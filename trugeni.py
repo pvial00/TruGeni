@@ -48,7 +48,7 @@ def numprocs():
     return len(lines) % 256
 
 def sumrxpkts():
-    cmd = ['netstat','-b']
+    cmd = ['netstat','-b', '-n']
     out = subprocess.check_output(cmd)
     lines = out.split('\n')
     lines.pop(0)
