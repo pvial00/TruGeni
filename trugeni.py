@@ -11,7 +11,7 @@ class RC4:
             state.append(i)
         j = 0
         for i in range(256):
-            j = (j + state[i] + ord(key[i % len(key)])) % 256
+            j = (j + state[i] + key[i % len(key)]) % 256
             state[i], state[j] = state[j], state[i]
         return state
 
@@ -28,7 +28,7 @@ class RC4:
 
 def freei():
     cmd = ['df']
-    out = subprocess.check_output(cmd)
+    out = subprocess.check_output(cmd).decode('utf-8')
     free = out.split('\n')[1].split()[6]
     i = int(free[len(free) - 3:]) % 256
     return i
@@ -36,20 +36,20 @@ def freei():
 
 def memtropy():
     cmd = ['vm_stat']
-    out = subprocess.check_output(cmd)
+    out = subprocess.check_output(cmd).decode('utf-8')
     pagesfree = int(out.split('\n')[1].split()[2].strip('.'))
     m = pagesfree % 256
     return m
 
 def numprocs():
     cmd = ['ps', '-ef']
-    out = subprocess.check_output(cmd)
+    out = subprocess.check_output(cmd).decode('utf-8')
     lines = out.split('\n')
     return len(lines) % 256
 
 def sumrxpkts():
     cmd = ['netstat','-b', '-n']
-    out = subprocess.check_output(cmd)
+    out = subprocess.check_output(cmd).decode('utf-8')
     lines = out.split('\n')
     lines.pop(0)
     lines.pop(0)
@@ -63,14 +63,14 @@ def sumrxpkts():
 
 def countlines():
     cmd = ['netstat']
-    out = subprocess.check_output(cmd)
+    out = subprocess.check_output(cmd).decode('utf-8')
     lines = out.split('\n')
     return len(lines)
 
 def getinput():
     t = str(int(time.time()))
     s = int(t[len(t) - 3:])
-    block = raw_input("Give me entropy!!!")
+    block = input("Give me entropy!!!")
     t = str(int(time.time()))
     e = int(t[len(t) - 3:])
     diff = e - s
@@ -99,7 +99,7 @@ def shuffle():
     s = int(t[len(t) - 3:])
     j = 0
     c = 0
-    S = range(256)
+    S = list(range(256))
     for x in range(768):
         j = (j + S[j]) % 256
         S[c], S[j] = S[j], S[c]
